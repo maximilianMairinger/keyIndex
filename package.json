@@ -17,9 +17,9 @@
     "url": "git+https://github.com/maximilianMairinger/keyIndex.git"
   },
   "keywords": [
-  "key",
-  "index"
-],
+    "key",
+    "index"
+  ],
   "author": "Maximilian Mairinger",
   "license": "ISC",
   "bugs": {
