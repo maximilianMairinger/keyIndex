@@ -1,4 +1,4 @@
-# [nameWithSpaces]
+# Key Index
 
 Key based index store.
 
