@@ -1,4 +1,4 @@
-export function constructIndex<Pointer, Value>(init: (pointer: Pointer) => Value) {
+export function constructIndex<Pointer = unknown, Value = unknown>(init: (pointer: Pointer) => Value) {
   const index: Map<Pointer, Value> = new Map
   
   return function (pointer: Pointer, set?: Value) {
@@ -20,7 +20,7 @@ export function constructIndex<Pointer, Value>(init: (pointer: Pointer) => Value
 export default constructIndex
 
 
-export function constructObjectIndex<Pointer, Value>(init: (pointer: Pointer) => Value) {
+export function constructObjectIndex<Pointer = unknown, Value = unknown>(init: (pointer: Pointer) => Value) {
   const index: any = {}
   
   return function (pointer: Pointer, set?: Value) {
