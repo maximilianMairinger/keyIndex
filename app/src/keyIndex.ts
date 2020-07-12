@@ -3,17 +3,30 @@ const indexSymbol = Symbol()
 type Primitive = string | number | symbol
 type GenericObject = {[key in Primitive]: unknown}
 
-export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}): ((pointer: Pointer, set?: Value) => Value) & { valueOf(): Map<Pointer, Value> } {
+export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}) {
   const index: Map<Pointer, Value> = new Map
   
-  function ind(pointer: Pointer, set?: Value) {
+  function ind(pointer: Pointer, set: Value): typeof set
+  function ind(pointer: Pointer): Value
+  function ind(): Map<Pointer, Value>
+  function ind(pointer?: Pointer, set?: Value) {
     if (set === undefined) {
-      let me = index.get(pointer)
-      if (me === undefined) {
-        me = init(pointer)
-        index.set(pointer, me)
+      if (pointer === undefined) {
+        let temp = new Map(index)
+        index.forEach((val, key) => {
+          if (val[indexSymbol]) temp.set(key, (val as any)())
+        })
+
+        return temp
       }
-      return me
+      else {
+        let me = index.get(pointer)
+        if (me === undefined) {
+          me = init(pointer)
+          index.set(pointer, me)
+        }
+        return me
+      }
     }
     else {
       index.set(pointer, set)
@@ -21,14 +34,7 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
     }
   }
   ind[indexSymbol] = true
-  ind.valueOf = () => {
-    let temp = new Map(index)
-    index.forEach((val, key) => {
-      if (val[indexSymbol]) temp.set(key, val.valueOf() as any)
-    })
 
-    return temp
-  }
 
   return ind
 }
@@ -36,26 +42,31 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
 export default constructIndex
 
 
-export function constructObjectIndex<Pointer extends Primitive = Primitive, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}): ((pointer: Pointer, set?: Value) => Value) & { valueOf(): {[key in Pointer]: Value} }  {
+export function constructObjectIndex<Pointer extends Primitive = Primitive, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}) {
   const index: any = {}
 
-  function ind(pointer: Pointer, set?: Value) {
+  function ind(pointer: Pointer, set: Value): typeof set
+  function ind(pointer: Pointer): Value
+  function ind(): {[key in Pointer]: Value}
+  function ind(pointer?: Pointer, set?: Value) {
     if (set === undefined) {
-      let me = index[pointer]
-      if (me === undefined) index[pointer] = me = init(pointer)
-      return me
+      if (pointer === undefined) {
+        let temp = {...index}
+        for (let key in index) {
+          if (index[key][indexSymbol]) temp[key] = index[key]()
+        }
+
+        return temp
+      }
+      else {
+        let me = index[pointer]
+        if (me === undefined) index[pointer] = me = init(pointer)
+        return me
+      }
     }
     else return index[pointer] = set
   }
   ind[indexSymbol] = true
-  ind.valueOf = () => {
-    let temp = {...index}
-    for (let key in index) {
-      if (index[key][indexSymbol]) temp.set(key, index[key].valueOf() as any)
-    }
-
-    return temp
-  }
   
   return ind
 }
