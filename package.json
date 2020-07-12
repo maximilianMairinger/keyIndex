@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/maximilianMairinger/keyIndex/issues"
   },
-  "homepage": "https://github.com/${githubUsername}/keyIndex#readme",
+  "homepage": "https://github.com/maximilianMairinger/keyIndex#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-json": "^4.1.0",
