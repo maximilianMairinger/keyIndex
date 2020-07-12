@@ -5,9 +5,9 @@ import json from '@rollup/plugin-json'
 
 
 export default {
-  input: 'test/src/test.ts',
+  input: 'repl/src/repl.ts',
   output: {
-    file: 'test/dist/keyIndex.js',
+    file: 'repl/dist/keyIndex.js',
     format: 'cjs',
     sourcemap: true
   },

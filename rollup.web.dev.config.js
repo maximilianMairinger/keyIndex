@@ -1,10 +1,10 @@
-import merge from "webpack-merge"
+import { merge } from "webpack-merge"
 import commonMod from "./rollup.web.common.config"
 
 
 export default merge(commonMod, {
   watch: {
-    include: ['app/src/**', "test/src/**"],
+    include: ['app/src/**', "repl/src/**"],
     exclude: 'node_modules/**'
   }
 })
