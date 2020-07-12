@@ -1,4 +1,9 @@
-export function constructIndex<Pointer = unknown, Value = unknown>(init: (pointer: Pointer) => Value): ((pointer: Pointer, set?: Value) => Value) & { valueOf(): Map<Pointer, Value> } {
+const indexSymbol = Symbol()
+
+type Primitive = string | number | symbol
+type GenericObject = {[key in Primitive]: unknown}
+
+export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}): ((pointer: Pointer, set?: Value) => Value) & { valueOf(): Map<Pointer, Value> } {
   const index: Map<Pointer, Value> = new Map
   
   function ind(pointer: Pointer, set?: Value) {
@@ -15,8 +20,14 @@ export function constructIndex<Pointer = unknown, Value = unknown>(init: (pointe
       return set
     }
   }
+  ind[indexSymbol] = true
   ind.valueOf = () => {
-    return index
+    let temp = new Map(index)
+    index.forEach((val, key) => {
+      if (val[indexSymbol]) temp.set(key, val.valueOf() as any)
+    })
+
+    return temp
   }
 
   return ind
@@ -25,9 +36,7 @@ export function constructIndex<Pointer = unknown, Value = unknown>(init: (pointe
 export default constructIndex
 
 
-type Primitive = string | number | symbol
-
-export function constructObjectIndex<Pointer extends Primitive = Primitive, Value = unknown>(init: (pointer: Pointer) => Value): ((pointer: Pointer, set?: Value) => Value) & { valueOf(): {[key in Pointer]: Value} }  {
+export function constructObjectIndex<Pointer extends Primitive = Primitive, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}): ((pointer: Pointer, set?: Value) => Value) & { valueOf(): {[key in Pointer]: Value} }  {
   const index: any = {}
 
   function ind(pointer: Pointer, set?: Value) {
@@ -38,8 +47,14 @@ export function constructObjectIndex<Pointer extends Primitive = Primitive, Valu
     }
     else return index[pointer] = set
   }
+  ind[indexSymbol] = true
   ind.valueOf = () => {
-    return index
+    let temp = {...index}
+    for (let key in index) {
+      if (index[key][indexSymbol]) temp.set(key, index[key].valueOf() as any)
+    }
+
+    return temp
   }
   
   return ind
