@@ -3,8 +3,14 @@ const indexSymbol = Symbol()
 type Primitive = string | number | symbol
 type GenericObject = {[key in Primitive]: unknown}
 
+function parseInit(init: any) {
+  if (init[indexSymbol]) return () => init()
+  else return init
+}
+
 export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}) {
   const index: Map<Pointer, Value> = new Map
+  init = parseInit(init)
   
   function ind(pointer: Pointer, set: Value): typeof set
   function ind(pointer: Pointer): Value
@@ -39,11 +45,14 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
   return ind
 }
 
+constructIndex[indexSymbol] = true
+
 export default constructIndex
 
 
 export function constructObjectIndex<Pointer extends Primitive = Primitive, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}) {
   const index: any = {}
+  init = parseInit(init)
 
   function ind(pointer: Pointer, set: Value): typeof set
   function ind(pointer: Pointer): Value
@@ -70,5 +79,7 @@ export function constructObjectIndex<Pointer extends Primitive = Primitive, Valu
   
   return ind
 }
+
+constructObjectIndex[indexSymbol] = true
 
 
