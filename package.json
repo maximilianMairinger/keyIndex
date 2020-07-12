@@ -35,5 +35,8 @@
     "tslib": "^2.0.0",
     "typescript": "^3.9.5",
     "webpack-merge": "^5.0.9"
+  },
+  "dependencies": {
+    "attatch-to-prototype": "^1.3.1"
   }
 }
