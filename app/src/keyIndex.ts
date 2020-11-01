@@ -1,11 +1,21 @@
+import getClassFunctionNames from "get-class-function-names"
+
 const indexSymbol = Symbol()
 
 type Primitive = string | number | symbol
 type GenericObject = {[key in Primitive]: unknown}
 
 
-export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}) {
-  const index: Map<Pointer, Value> = new Map
+type Ind<Pointer, Value> = 
+((pointer: Pointer, set: Value) => typeof set) | 
+((pointer: Pointer) => Value) |
+(() => Map<Pointer, Value>)
+
+
+export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value, Index: typeof Map): Ind<Pointer, Value> & Map<Pointer, Value>
+export function constructIndex<Pointer extends object = object, Value = GenericObject>(init: (pointer: Pointer) => Value, Index?: typeof WeakMap): Ind<Pointer, Value> & WeakMap<Pointer, Value>
+export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}, Index: typeof Map | typeof WeakMap = WeakMap): any {
+  const index: Map<Pointer, Value> = new (Index as any)
   
   function ind(pointer: Pointer, set: Value): typeof set
   function ind(pointer: Pointer): Value
@@ -13,7 +23,7 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
   function ind(pointer?: Pointer, set?: Value) {
     if (set === undefined) {
       if (pointer === undefined) {
-        let temp = new Map(index)
+        let temp = new (Index as any)(index)
         index.forEach((val, key) => {
           if (val[indexSymbol]) temp.set(key, (val as any)())
         })
@@ -37,43 +47,31 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
   ind[indexSymbol] = true
 
 
-  return ind
+
+  const propagate = constructPropagate(index, ind)
+  for (let k of getClassFunctionNames(Index)) {
+    propagate(k)
+  }
+  
+
+  
+
+
+  return ind as any
 }
+
+
+function constructPropagate(root: any, to: any) {
+  return function propagate(rootKey: string) {
+    to[rootKey] = root[rootKey]
+  }
+}
+
+type Maybe<T> = T | undefined
 
 constructIndex[indexSymbol] = true
 
 export default constructIndex
 
-
-export function constructObjectIndex<Pointer extends Primitive = Primitive, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}) {
-  const index: any = {}
-
-  function ind(pointer: Pointer, set: Value): typeof set
-  function ind(pointer: Pointer): Value
-  function ind(): {[key in Pointer]: Value}
-  function ind(pointer?: Pointer, set?: Value) {
-    if (set === undefined) {
-      if (pointer === undefined) {
-        let temp = {...index}
-        for (let key in index) {
-          if (index[key][indexSymbol]) temp[key] = index[key]()
-        }
-
-        return temp
-      }
-      else {
-        let me = index[pointer]
-        if (me === undefined) index[pointer] = me = init(pointer)
-        return me
-      }
-    }
-    else return index[pointer] = set
-  }
-  ind[indexSymbol] = true
-  
-  return ind
-}
-
-constructObjectIndex[indexSymbol] = true
 
 

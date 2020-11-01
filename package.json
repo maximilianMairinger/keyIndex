@@ -35,5 +35,8 @@
     "tslib": "^2.0.0",
     "typescript": "^3.9.5",
     "webpack-merge": "^5.0.9"
+  },
+  "dependencies": {
+    "get-class-function-names": "^1.1.1"
   }
 }
