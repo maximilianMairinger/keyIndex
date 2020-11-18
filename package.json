@@ -1,6 +1,6 @@
 {
   "name": "key-index",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "Key based index store.",
   "main": "app/dist/keyIndex.js",
   "types": "app/dist/keyIndex.d.ts",
