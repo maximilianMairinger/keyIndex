@@ -12,8 +12,8 @@ type Ind<Pointer, Value> =
 (() => Map<Pointer, Value>)
 
 
-export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value, Index: typeof Map): Ind<Pointer, Value> & Map<Pointer, Value>
-export function constructIndex<Pointer extends object = object, Value = GenericObject>(init: (pointer: Pointer) => Value, Index?: typeof WeakMap): Ind<Pointer, Value> & WeakMap<Pointer, Value>
+export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value, Index?: typeof Map): Ind<Pointer, Value> & Map<Pointer, Value>
+export function constructIndex<Pointer extends object = object, Value = GenericObject>(init: (pointer: Pointer) => Value, Index: typeof WeakMap): Ind<Pointer, Value> & WeakMap<Pointer, Value>
 export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}, Index: typeof Map | typeof WeakMap = Map): any {
   const index: Map<Pointer, Value> = new (Index as any)
   
