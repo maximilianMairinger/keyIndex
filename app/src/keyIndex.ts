@@ -7,8 +7,8 @@ type GenericObject = {[key in Primitive]: unknown}
 
 
 type Ind<Pointer, Value> = 
-((pointer: Pointer, set: Value) => typeof set) | 
-((pointer: Pointer) => Value) |
+((pointer: Pointer, set: Value) => typeof set) &
+((pointer: Pointer) => Value) &
 (() => Map<Pointer, Value>)
 
 
