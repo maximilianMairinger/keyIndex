@@ -57,7 +57,7 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
 
 
   const propagate = constructPropagate(index, ind)
-  for (let k of getClassFunctionNames(Index, {includeInstanceOf: Function})) {
+  for (let k of getClassFunctionNames(Index)) {
     propagate(k)
   }
   
@@ -71,7 +71,20 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
 
 function constructPropagate(root: any, to: any) {
   return function propagate(rootKey: string) {
-    to[rootKey] = root[rootKey].bind(root)
+    if (root[rootKey] instanceof Function) {
+      to[rootKey] = root[rootKey].bind(root)
+    }
+    else {
+      Object.defineProperty(to, rootKey, {
+        get() {
+          return root[rootKey]
+        },
+        set(to) {
+          root[rootKey] = to
+        }
+      })
+    }
+    
   }
 }
 
