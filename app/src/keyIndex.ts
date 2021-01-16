@@ -16,7 +16,7 @@ type Ind<Pointer, Value> =
 export const constructObjectIndex = (...a) => {
   console.warn("constructObjectIndex is deprecated and will be removed in key-index@2")
   //@ts-ignore
-  constructIndex(...a)
+  return constructIndex(...a)
 }
 
 
