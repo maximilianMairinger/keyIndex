@@ -20,7 +20,7 @@ export const constructObjectIndex = (...a) => {
 }
 
 
-export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value, Index?: typeof Map): Ind<Pointer, Value> & Map<Pointer, Value>
+export function constructIndex<Pointer = unknown, Value = GenericObject>(init?: (pointer: Pointer) => Value, Index?: typeof Map): Ind<Pointer, Value> & Map<Pointer, Value>
 export function constructIndex<Pointer extends object = object, Value = GenericObject>(init: (pointer: Pointer) => Value, Index: typeof WeakMap): Ind<Pointer, Value> & WeakMap<Pointer, Value>
 export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (pointer: Pointer) => Value = () => {return {} as any}, Index: typeof Map | typeof WeakMap = Map): any {
   const index: Map<Pointer, Value> = new (Index as any)
@@ -29,8 +29,8 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
   function ind(pointer: Pointer): Value
   function ind(): Map<Pointer, Value>
   function ind(pointer?: Pointer, set?: Value) {
-    if (set === undefined) {
-      if (pointer === undefined) {
+    if (arguments.length < 2) {
+      if (arguments.length === 0) {
         let temp = new (Index as any)(index)
         index.forEach((val, key) => {
           if (val[indexSymbol]) temp.set(key, (val as any)())
