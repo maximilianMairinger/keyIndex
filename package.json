@@ -2,10 +2,17 @@
   "name": "key-index",
   "version": "1.4.10",
   "description": "Key based index store.",
-  "main": "app/dist/keyIndex.js",
-  "types": "app/dist/keyIndex.d.ts",
+  "main": "app/dist/esm/keyIndex.js",
+  "types": "app/dist/esm/keyIndex.d.ts",
+  "exports": {
+    "node": {
+      "import": "./app/dist/esm/keyIndex.js",
+      "require": "./app/dist/cjs/keyIndex.js"
+    },
+    "default": "./app/dist/esm/keyIndex.js"
+  },
   "scripts": {
-    "build": "tsc -p ./tsconfig.prod.json",
+    "build": "rollup --config rollup.prod.config.js",
     "dev": "npm run devWeb",
     "devWeb": "rollup --config rollup.web.dev.config.js -w",
     "deploy": "npm run build && npm publish",
