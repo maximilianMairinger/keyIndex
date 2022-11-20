@@ -6,16 +6,16 @@
   "types": "app/dist/esm/keyIndex.d.ts",
   "exports": {
     "node": {
-      "import": "./app/dist/esm/keyIndex.js",
+      "import": "./app/dist/esm/keyIndex.mjs",
       "require": "./app/dist/cjs/keyIndex.js"
     },
     "default": "./app/dist/esm/keyIndex.js"
   },
   "scripts": {
     "build": "npm run buildCJS && npm run buildESM",
-    "buildCJS": "del-cli app/dist/cjs && tsc -p ./tsconfig.prod.cjs.json",
-    "devCJS": "del-cli app/dist/cjs && tsc -p ./tsconfig.prod.cjs.json -w",
-    "buildESM": "del-cli app/dist/esm && tsc -p ./tsconfig.prod.esm.json && renamer --find /\\.js$/i --replace .mjs app/dist/esm/**",
+    "buildCJS": "npx del-cli app/dist/cjs && tsc -p ./tsconfig.prod.cjs.json",
+    "devCJS": "npx del-cli app/dist/cjs && tsc -p ./tsconfig.prod.cjs.json -w",
+    "buildESM": "npx del-cli app/dist/esm && tsc -p ./tsconfig.prod.esm.json && npx ncp app/dist/esm app/dist/esm2; npx renamer --find /\\.js$/i --replace .mjs app/dist/esm2/**; npx ncp app/dist/esm2 app/dist/esm; npx del-cli app/dist/esm2",
     "dev": "npm run devNode",
     "devWeb": "rollup --config rollup.web.dev.config.js -w",
     "devNode": "rollup --config rollup.node.dev.config.js -w",
@@ -45,6 +45,7 @@
     "@rollup/plugin-typescript": "5.0.0",
     "@types/node": "^13.13.4",
     "del-cli": "^5.0.0",
+    "ncp": "^2.0.0",
     "renamer": "^4.0.0",
     "rollup": "^2.18.1",
     "tslib": "^2.0.0",
