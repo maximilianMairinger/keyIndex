@@ -88,11 +88,23 @@ function constructPropagate(root: any, to: any) {
   }
 }
 
-type Maybe<T> = T | undefined
-
 constructIndex[indexSymbol] = true
 
 export default constructIndex
 
+
+
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T): (...forwarded: Args) => T {
+  let cache: T
+  let isCached = false
+  return function(...forwarded: Args) {
+    if (!isCached) {
+      cache = creator(...forwarded)
+      isCached = true
+      return cache
+    }
+    else return cache    
+  }
+}
 
 
