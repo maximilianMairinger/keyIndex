@@ -2,27 +2,28 @@
   "name": "key-index",
   "version": "1.4.12",
   "description": "Key based index store.",
-  "main": "app/dist/esm/keyIndex.js",
+  "main": "app/dist/esm/keyIndex.mjs",
   "types": "app/dist/esm/keyIndex.d.ts",
   "exports": {
     "node": {
       "import": "./app/dist/esm/keyIndex.mjs",
       "require": "./app/dist/cjs/keyIndex.js"
     },
-    "default": "./app/dist/esm/keyIndex.js"
+    "default": "./app/dist/esm/keyIndex.mjs"
   },
   "scripts": {
-    "build": "npm run buildCJS && npm run buildESM",
-    "buildCJS": "npx del-cli app/dist/cjs && tsc -p ./tsconfig.prod.cjs.json",
+    "build": "del-cli app/dist && concurrently \"npm run buildESM\" \"npm run buildCJS\" --raw",
+    "buildESM": "tsc -p ./tsconfig.prod.esm.json && mjsify app/dist esm cjs",
+    "buildCJS": "tsc -p ./tsconfig.prod.cjs.json && npm run buildCJS2",
+    "buildCJS2": "rollup --config rollup.node.prod.config.mjs",
     "devCJS": "npx del-cli app/dist/cjs && tsc -p ./tsconfig.prod.cjs.json -w",
-    "buildESM": "npx del-cli app/dist/esm && tsc -p ./tsconfig.prod.esm.json && npx ncp app/dist/esm app/dist/esm2; npx renamer --find /\\.js$/i --replace .mjs app/dist/esm2/**; npx ncp app/dist/esm2 app/dist/esm; npx del-cli app/dist/esm2",
     "dev": "npm run devNode",
-    "devWeb": "rollup --config rollup.web.dev.config.js -w",
-    "devNode": "rollup --config rollup.node.dev.config.js -w",
+    "devWeb": "rollup --config rollup.web.dev.config.mjs -w",
+    "devNode": "rollup --config rollup.node.dev.config.mjs -w",
     "deploy": "npm run build && npm publish",
     "repl": "node --trace-warnings ./repl/dist/imageWeb-repl.js",
     "start": "npm run repl",
-    "buildTest": "rollup --config rollup.node.test.config.js"
+    "buildTest": "rollup --config rollup.node.test.config.mjs"
   },
   "repository": {
     "type": "git",
@@ -39,12 +40,15 @@
   },
   "homepage": "https://github.com/maximilianMairinger/keyIndex#readme",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^13.0.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^8.1.0",
-    "@rollup/plugin-typescript": "5.0.0",
+    "@rollup/plugin-commonjs": "^25.0.1",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-typescript": "^11.1.1",
     "@types/node": "^13.13.4",
+    "builtins": "^5.0.1",
+    "concurrently": "^8.2.0",
     "del-cli": "^5.0.0",
+    "mjsify": "^2.0.8",
     "ncp": "^2.0.0",
     "renamer": "^4.0.0",
     "rollup": "^2.18.1",
