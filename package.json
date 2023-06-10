@@ -51,7 +51,7 @@
     "mjsify": "^2.0.8",
     "ncp": "^2.0.0",
     "renamer": "^4.0.0",
-    "rollup": "^2.18.1",
+    "rollup": "^3.24.1",
     "tslib": "^2.0.0",
     "typescript": "^3.9.5",
     "webpack-merge": "^5.0.9"
