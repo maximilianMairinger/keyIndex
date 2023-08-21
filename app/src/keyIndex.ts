@@ -1,4 +1,4 @@
-import getClassFunctionNames from "get-class-function-names"
+import getClassFunctionNames, { getClassFunctionSymbols } from "get-class-function-names"
 
 const indexSymbol = Symbol()
 
@@ -60,6 +60,10 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
   for (let k of getClassFunctionNames(Index)) {
     propagate(k)
   }
+
+  for (let k of getClassFunctionSymbols(Index)) {
+    propagate(k)
+  }
   
 
   
@@ -70,7 +74,7 @@ export function constructIndex<Pointer = unknown, Value = GenericObject>(init: (
 
 
 function constructPropagate(root: any, to: any) {
-  return function propagate(rootKey: string) {
+  return function propagate(rootKey: string | symbol) {
     if (root[rootKey] instanceof Function) {
       to[rootKey] = root[rootKey].bind(root)
     }
