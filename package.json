@@ -57,6 +57,6 @@
     "webpack-merge": "^5.0.9"
   },
   "dependencies": {
-    "get-class-function-names": "^1.1.1"
+    "get-class-function-names": "^1.2.0"
   }
 }
