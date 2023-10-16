@@ -26,7 +26,8 @@ const config = {
     file: 'repl/dist/keyIndex-repl.js',
     format: 'cjs',
     sourcemap: false,
-    exports: "named"
+    exports: "named",
+    interop: "auto"
   },
   plugins: [
     typescript({tsconfig: "./tsconfig.json", noEmitOnError: false, sourceMap: false}), 
