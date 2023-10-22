@@ -1,6 +1,6 @@
 {
   "name": "key-index",
-  "version": "1.4.17",
+  "version": "1.4.18",
   "description": "Key based index store.",
   "main": "app/dist/esm/keyIndex.mjs",
   "types": "app/dist/esm/keyIndex.d.ts",
