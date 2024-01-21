@@ -98,7 +98,7 @@ constructIndex[indexSymbol] = true
 export default constructIndex
 
 
-export function memoize<T>(creator: () => T, optimisticReturnUndefinedOnCyclicCallDefaultValue: boolean): (optimisticReturnUndefinedOnCyclicCall?: boolean) => T | undefined
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, optimisticReturnUndefinedOnCyclicCallDefaultValue: boolean): (optimisticReturnUndefinedOnCyclicCall?: boolean, args?: Args) => T | undefined
 export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T): (...forwarded: Args) => T
 export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, cyclicCallReturnUndefinedDefaultValue?: boolean): (...forwarded: Args) => T {
   const cyclicCallPossible = cyclicCallReturnUndefinedDefaultValue !== undefined
@@ -107,7 +107,7 @@ export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) =
   return function(...forwarded: Args) {
     if (!isCached) {
       if (cyclicCallPossible && forwarded[0] !== undefined ? forwarded[0] : cyclicCallReturnUndefinedDefaultValue) isCached = true
-      cache = creator(...forwarded)
+      cache = creator(...!cyclicCallPossible ? forwarded : forwarded[1] !== undefined ? forwarded[1] as Args : [] as Args)
       // if we move this line above the previous line, we would allow cyclic calls (by just returning undefined). Dont know it thats a good idea, as the error would be hidden
       isCached = true
       return cache
