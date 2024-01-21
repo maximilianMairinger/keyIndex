@@ -112,7 +112,7 @@ export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) =
       cache = creator(...!optimisticReturn ? forwarded : forwarded[1] !== undefined ? forwarded[1] as Args : [] as Args)
       // if we move this line above the previous line, we would allow cyclic calls (by just returning undefined). Dont know it thats a good idea, as the error would be hidden
       isCached = true
-      if (afterCreatorDef) afterCreator_cyclicCallReturnUndefinedDefaultValue!(forwarded, cache)
+      if (afterCreatorDef) (afterCreator_cyclicCallReturnUndefinedDefaultValue as Function)(forwarded, cache)
 
       return cache
     }
