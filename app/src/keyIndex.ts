@@ -99,17 +99,21 @@ export default constructIndex
 
 
 export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, optimisticReturnUndefinedOnCyclicCallDefaultValue: boolean): (optimisticReturnUndefinedOnCyclicCall?: boolean, args?: Args) => T | undefined
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, afterCreator?: (forwardArgs: Args, ret: T) => void): (...forwarded: Args) => T
 export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T): (...forwarded: Args) => T
-export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, cyclicCallReturnUndefinedDefaultValue?: boolean): (...forwarded: Args) => T {
-  const cyclicCallPossible = cyclicCallReturnUndefinedDefaultValue !== undefined
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, afterCreator_cyclicCallReturnUndefinedDefaultValue?: boolean | ((forwardArgs: Args, ret: T) => void)): (...forwarded: Args) => T {
+  const optimisticReturn = afterCreator_cyclicCallReturnUndefinedDefaultValue !== undefined && typeof afterCreator_cyclicCallReturnUndefinedDefaultValue !== "function" 
+  const afterCreatorDef = afterCreator_cyclicCallReturnUndefinedDefaultValue !== undefined && typeof afterCreator_cyclicCallReturnUndefinedDefaultValue === "function"
   let cache: T
   let isCached = false
   return function(...forwarded: Args) {
     if (!isCached) {
-      if (cyclicCallPossible && forwarded[0] !== undefined ? forwarded[0] : cyclicCallReturnUndefinedDefaultValue) isCached = true
-      cache = creator(...!cyclicCallPossible ? forwarded : forwarded[1] !== undefined ? forwarded[1] as Args : [] as Args)
+      if (optimisticReturn && forwarded[0] !== undefined ? forwarded[0] : afterCreator_cyclicCallReturnUndefinedDefaultValue) isCached = true
+      cache = creator(...!optimisticReturn ? forwarded : forwarded[1] !== undefined ? forwarded[1] as Args : [] as Args)
       // if we move this line above the previous line, we would allow cyclic calls (by just returning undefined). Dont know it thats a good idea, as the error would be hidden
       isCached = true
+      if (afterCreatorDef) afterCreator_cyclicCallReturnUndefinedDefaultValue!(forwarded, cache)
+
       return cache
     }
     else return cache    
