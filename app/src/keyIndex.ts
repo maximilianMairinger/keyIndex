@@ -124,19 +124,27 @@ export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) =
 export const isBigintSupported = memoize(() => {
   try {BigInt(1); return true} catch(e) {return false}
 })
-export function incUIDScope<Val extends number | bigint>(init: Val, inc: Val): () => Val
+export function incUIDScope<Val extends number | bigint>(init: Val, inc?: Val): () => Val
 export function incUIDScope<Val extends number | bigint>(): () => Val
 export function incUIDScope<Val extends number | bigint>(init?: Val, inc?: Val) {
   if (init === undefined) {
     if (isBigintSupported()) {
       init = BigInt(0) as any
-      inc = BigInt(1) as any
     }
     else {
       init = 0 as any
-      inc = 1 as any
     }
   }
+
+  if (inc === undefined) {
+    if (typeof init === "number") {
+      inc = 1 as any
+    }
+    else {
+      inc = BigInt(1) as any
+    }
+  }
+
   let uid = init as any
   return () => {
     uid = uid + inc as any
