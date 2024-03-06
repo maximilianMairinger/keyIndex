@@ -98,9 +98,9 @@ constructIndex[indexSymbol] = true
 export default constructIndex
 
 
-export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, optimisticReturnUndefinedOnCyclicCallDefaultValue: boolean): ((optimisticReturnUndefinedOnCyclicCall?: boolean, args?: Args) => T | undefined) & {readonly resolved: boolean}
-export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, afterCreator?: (forwardArgs: Args, ret: T) => void): ((...forwarded: Args) => T) & {readonly resolved: boolean}
-export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T): ((...forwarded: Args) => T) & {readonly resolved: boolean}
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, optimisticReturnUndefinedOnCyclicCallDefaultValue: boolean): ((optimisticReturnUndefinedOnCyclicCall?: boolean, args?: Args) => T | undefined) & {readonly isResolved: boolean}
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, afterCreator?: (forwardArgs: Args, ret: T) => void): ((...forwarded: Args) => T) & {readonly isResolved: boolean}
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T): ((...forwarded: Args) => T) & {readonly isResolved: boolean}
 export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, afterCreator_cyclicCallReturnUndefinedDefaultValue?: boolean | ((forwardArgs: Args, ret: T) => void)): (...forwarded: Args) => T {
   const optimisticReturn = afterCreator_cyclicCallReturnUndefinedDefaultValue !== undefined && typeof afterCreator_cyclicCallReturnUndefinedDefaultValue !== "function" 
   const afterCreatorDef = afterCreator_cyclicCallReturnUndefinedDefaultValue !== undefined && typeof afterCreator_cyclicCallReturnUndefinedDefaultValue === "function"
