@@ -98,26 +98,27 @@ constructIndex[indexSymbol] = true
 export default constructIndex
 
 
-export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, optimisticReturnUndefinedOnCyclicCallDefaultValue: boolean): ((optimisticReturnUndefinedOnCyclicCall?: boolean, args?: Args) => T | undefined) & {readonly isResolved: boolean}
-export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, afterCreator?: (forwardArgs: Args, ret: T) => void): ((...forwarded: Args) => T) & {readonly isResolved: boolean}
-export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T): ((...forwarded: Args) => T) & {readonly isResolved: boolean}
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, optimisticReturnUndefinedOnCyclicCallDefaultValue: boolean): ((optimisticReturnUndefinedOnCyclicCall?: boolean, args?: Args) => T | undefined) & {readonly isResolved: boolean, readonly cache: T}
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, afterCreator?: (forwardArgs: Args, ret: T) => void): ((...forwarded: Args) => T) & {readonly isResolved: boolean, readonly cache: T}
+export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T): ((...forwarded: Args) => T) & {readonly isResolved: boolean, readonly cache: T}
 export function memoize<T, Args extends unknown[]>(creator: (...forward: Args) => T, afterCreator_cyclicCallReturnUndefinedDefaultValue?: boolean | ((forwardArgs: Args, ret: T) => void)): (...forwarded: Args) => T {
   const optimisticReturn = afterCreator_cyclicCallReturnUndefinedDefaultValue !== undefined && typeof afterCreator_cyclicCallReturnUndefinedDefaultValue !== "function" 
   const afterCreatorDef = afterCreator_cyclicCallReturnUndefinedDefaultValue !== undefined && typeof afterCreator_cyclicCallReturnUndefinedDefaultValue === "function"
-  let cache: T
+
   function f(...forwarded: Args) {
     if (!f.isResolved) {
       if (optimisticReturn && forwarded[0] !== undefined ? forwarded[0] : afterCreator_cyclicCallReturnUndefinedDefaultValue) f.isResolved = true
-      cache = creator(...!optimisticReturn ? forwarded : forwarded[1] !== undefined ? forwarded[1] as Args : [] as Args)
+      f.cache = creator(...!optimisticReturn ? forwarded : forwarded[1] !== undefined ? forwarded[1] as Args : [] as Args)
       // if we move this line above the previous line, we would allow cyclic calls (by just returning undefined). Dont know it thats a good idea, as the error would be hidden
       f.isResolved = true
-      if (afterCreatorDef) (afterCreator_cyclicCallReturnUndefinedDefaultValue as Function)(forwarded, cache)
+      if (afterCreatorDef) (afterCreator_cyclicCallReturnUndefinedDefaultValue as Function)(forwarded, f.cache)
 
-      return cache
+      return f.cache
     }
-    else return cache    
+    else return f.cache    
   }
   f.isResolved = false
+  f.cache = undefined
   return f
 }
 
