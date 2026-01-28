@@ -1,5 +1,4 @@
 import getClassFunctionNames, { getClassFunctionSymbols } from "get-class-function-names"
-import { isUndefined } from "util"
 
 const indexSymbol = Symbol()
 
